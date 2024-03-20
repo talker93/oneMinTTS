@@ -1,2 +1,2 @@
 # oneMinTTS
-A speech synthesis program that operates independently of dependencies.
+Launch your speech synthesis within one minute.
