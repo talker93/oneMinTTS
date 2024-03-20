@@ -11,7 +11,7 @@ Welcome to the GitHub repository for oneMinTTS! This project provides a simple s
 
 - **Superior Quality**: Provides superior audio quality compared to Tacotron, enhancing user experience and output fidelity.
 
-- **VITS Compatibility**: While based on various VITS Python projects, this implementation primarily serves the VITS model, ensuring compatibility and ease of use.
+- **VITS Compatibility**: While based on various TTS Python projects, this implementation primarily serves the VITS model, ensuring compatibility and ease of use.
 
 - **Cross-Platform Support**: Fully supports both macOS and Windows PC, ensuring broad accessibility and user flexibility.
 
