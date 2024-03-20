@@ -23,11 +23,11 @@ To begin using oneMinTTS, simply clone this repository to your local machine. Gi
 ```
 git clone https://github.com/talker93/oneMinTTS.git
 ```
-1. Open folder `build/<YOUR PC ARCH>` in terminal/cmd
+2. Open folder `build/<YOUR PC ARCH>` in terminal/cmd
 ```
 cd build/mac_arm64
 ```
-1. Start Synthesis
+3. Start Synthesis
 ```
 ❯ ./oneMinTTS
 Enter your text: hello world
