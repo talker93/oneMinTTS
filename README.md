@@ -1,8 +1,6 @@
 # oneMinTTS
 Launch your speech synthesis within one minute.
 
-# Project Name
-
 Welcome to the GitHub repository for oneMinTTS! This project provides a simple solution for speech synthesis and model management, designed for high-performance and universal application. Below are some of the key features:
 
 ## Key Features
