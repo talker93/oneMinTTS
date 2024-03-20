@@ -43,7 +43,9 @@ Output written to output.wav
 ```
 
 ## Documentation
-For detailed information on project setup, model import, and additional functionalities, refer to the Documentation.
+The supported model is currently only VITS.
+Check the training process from this repo: `https://github.com/p0p4k/vits2_pytorch`
+More model's support is coming soon!
 
 <!-- ## Contributing
 We welcome contributions and suggestions! Please refer to the Contributing Guidelines for more information. -->
