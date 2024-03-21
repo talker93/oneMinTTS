@@ -1,3 +1,14 @@
+//
+//  main_win.cpp
+//
+//  Created by 江山 on 3/20/24.
+//  The script is for Windows
+//
+//  Some UTF8 special characters are too funny to operate in c++
+//  such that I generated a word2id dictionary
+//  eg. hello | [16, 32, 84, 6, 1]
+
+
 #include <vector>
 #include <onnxruntime_cxx_api.h>
 #include <fstream>

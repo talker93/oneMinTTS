@@ -1,16 +1,15 @@
 //
 //  main_win.cpp
-//  vits4local_cpp
 //
 //  Created by 江山 on 3/20/24.
-//  The program is for Windows
+//  The program is for Mac
 //
 //  Some UTF8 special characters are too funny to operate in c++
 //  such that I generated a word2id dictionary
 //  eg. hello | [16, 32, 84, 6, 1]
 
 #include <vector>
-#include <onnxruntime/onnxruntime_cxx_api.h>
+#include <onnxruntime_cxx_api.h>
 #include <fstream>
 #include <iostream>
 #include <algorithm>
@@ -224,7 +223,7 @@ int main() {
     std::cout << "Tokenizing..." << std::endl;
 
     // Text to ids
-    int elementCount;
+    int elementCount = 0;
     std::vector<int64_t> iVecCache;
     iVecCache = textToId(text_entry, idDictionary, elementCount);
     
