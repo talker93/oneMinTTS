@@ -1,3 +1,14 @@
+//
+//  main_win.cpp
+//  vits4local_cpp
+//
+//  Created by 江山 on 3/20/24.
+//  The program is for Windows
+//
+//  Some UTF8 special characters are too funny to operate in c++
+//  such that I generated a word2id dictionary
+//  eg. hello | [16, 32, 84, 6, 1]
+
 #include <vector>
 #include <onnxruntime/onnxruntime_cxx_api.h>
 #include <fstream>
@@ -16,6 +27,7 @@
 #include <cstdio>
 #include <stdexcept>
 #include <cstdint>
+#include <cctype> // For std::isspace
 
 namespace fs = std::filesystem;
 
@@ -31,6 +43,25 @@ std::string exec(const char* cmd) {
     }
     return result;
 }
+
+std::string addSpaceBetweenWordsAndPunctuation(const std::string& input) {
+    std::string result;
+    for (size_t i = 0; i < input.length(); ++i) {
+        char current = input[i];
+        // Check if current character is punctuation and there is no space before it
+        if (ispunct(current) && (i == 0 || !std::isspace(input[i - 1]))) {
+            result += ' '; // Add a space before the punctuation
+        }
+        result += current;
+        // Check if the current character is punctuation and it's not the last character,
+        // and there is no space after it.
+        if (ispunct(current) && (i + 1 < input.length()) && !std::isspace(input[i + 1])) {
+            result += ' '; // Add a space after the punctuation
+        }
+    }
+    return result;
+}
+
 
 // Function to load the phoneme dictionary from a text file
 std::unordered_map<std::string, std::string> loadPhonemeDictionary(const std::string& filename) {
@@ -54,7 +85,7 @@ std::string textToPhonemes(const std::string& text, const std::unordered_map<std
     std::string word, phonemeText;
     while (textStream >> word) {
         // Remove punctuation from the end of words
-        word.erase(std::remove_if(word.begin(), word.end(), ::ispunct), word.end());
+//        word.erase(std::remove_if(word.begin(), word.end(), ::ispunct), word.end());
         // Convert to lowercase
         std::transform(word.begin(), word.end(), word.begin(), ::tolower);
         // query the dict to get phonemes
@@ -66,6 +97,77 @@ std::string textToPhonemes(const std::string& text, const std::unordered_map<std
         }
     }
     return phonemeText;
+}
+
+// Function to load the ID dictionary from a text file
+std::unordered_map<std::string, std::string> loadIdDictionary(const std::string& filename) {
+    std::unordered_map<std::string, std::string> dictionary;
+    std::ifstream file(filename);
+    std::string line, word, id;
+    
+    while (getline(file, line)) {
+        std::istringstream lineStream(line);
+        if (getline(lineStream, word, ',') && getline(lineStream, id)) {
+            dictionary[word] = id;
+        }
+    }
+    
+    return dictionary;
+}
+
+// Function to convert text into ID
+std::vector<int64_t> textToId(const std::string& text, const std::unordered_map<std::string, std::string>& dictionary, int& wordCount) {
+    std::string spacedString = addSpaceBetweenWordsAndPunctuation(text);
+    std::istringstream textStream(spacedString);
+    std::string word, ids;
+    
+    while (textStream >> word) {
+        // Convert to lowercase
+        std::transform(word.begin(), word.end(), word.begin(), ::tolower);
+        auto it = dictionary.find(word);
+        if (it != dictionary.end()) {
+            ids += it->second + " ";
+        }
+    }
+    
+    // Remove carriage, double quotes, brackets and returns from ids
+    ids.erase(std::remove(ids.begin(), ids.end(), '\r'), ids.end());
+    ids.erase(std::remove(ids.begin(), ids.end(), '"'), ids.end());
+    ids.erase(std::remove(ids.begin(), ids.end(), '['), ids.end());
+    for (char& ch : ids) {
+        if (ch == ']') {
+            ch = ',';
+        }
+    }
+    
+    // Remove extra spaces from ids
+    std::string::iterator new_end2 = std::unique(ids.begin(), ids.end(), [](unsigned char a, unsigned char b) {
+        return std::isspace(a) && std::isspace(b);
+    });
+    ids.erase(new_end2, ids.end());
+    
+//    std::cout << "Id sequence: " << ids << std::endl;
+    
+    int commaCount = 0;
+    for (char ch : ids) {
+        if (ch == ',') {
+            commaCount++;
+        }
+    }
+
+    // Use stringstream to parse the numbers
+    std::vector<int64_t> array;
+    std::stringstream ss(ids);
+    std::string token;
+    while (std::getline(ss, token, ',') && wordCount < commaCount) {
+        // Remove spaces
+        token.erase(std::remove_if(token.begin(), token.end(), ::isspace), token.end());
+        // Convert string to int64_t and add to array
+        array.push_back(std::stoll(token));
+        wordCount++;
+    }
+    
+    return array;
 }
 
 // Function to write a WAV header to a file
@@ -96,86 +198,43 @@ void write_wav_header(std::ofstream& file, int sampleRate, int bitsPerSample, in
 int main() {
     // The sentence to convert
     std::string text_entry;
-    std::cout << "Enter your text: ";
-    std::getline(std::cin, text_entry); // Reads a line of text from standard input
-
-    // Now text_entry contains the text entered by the user
-    std::cout << std::endl;
-    std::cout << "You entered: " << text_entry << std::endl;
+    while (text_entry.empty()) {
+        std::cout << "Enter your text: ";
+        std::getline(std::cin, text_entry); // Reads a line of text from standard input
+        
+        // Now text_entry contains the text entered by the user
+        std::cout << std::endl;
+        std::cout << "You entered: " << text_entry << std::endl;
+    }
     
-    // Load the phoneme dictionary
+    // Get the root folder
     fs::path exec_path = fs::current_path();
-    fs::path dict_path = exec_path / "word_ipa_dict.csv";
-    auto phonemeDictionary = loadPhonemeDictionary(dict_path.string());
+    
+    // Load the ID dictionary
+    fs::path id_path = exec_path / "word_id_dict.csv";
+    auto idDictionary = loadIdDictionary(id_path);
+    
     std::cout << std::endl;
-    std::cout << "Dictionary loaded at: " << dict_path << std::endl;
+    std::cout << "Dictionary loaded at: " << id_path << std::endl;
 
     std::cout << std::endl;
     std::cout << "Phonemizing..." << std::endl;
-
-    // Convert text to phonemes
-    std::string phonemes = textToPhonemes(text_entry, phonemeDictionary);
-    
-    // Remove carriage returns from phonemes
-    phonemes.erase(std::remove(phonemes.begin(), phonemes.end(), '\r'), phonemes.end());
-    
-    // Remove extra spaces from phonemes
-    std::string::iterator new_end = std::unique(phonemes.begin(), phonemes.end(), [](unsigned char a, unsigned char b) {
-        return std::isspace(a) && std::isspace(b);
-    });
-    phonemes.erase(new_end, phonemes.end());
-    std::cout << "Phonemes: " << phonemes << std::endl;
     
     std::cout << std::endl;
     std::cout << "Tokenizing..." << std::endl;
-    
-    // Convert phonemes into integers
-    fs::path script_path = exec_path / "sym2int";
-    // std::string txt = "ɪn ɐ ɹˈɛlm wˌeə tˈaɪm wˈiːvz"; // for testing purpose
-    std::string command = script_path.string() + " '" + phonemes + "'";
-    std::cout << command << std::endl;
-    std::string cmd_output;
-    try {
-        cmd_output = exec(command.c_str());
-        std::cout << "The script returned (token of characters): " << cmd_output << std::endl;
-        std::cout << std::endl;
-    } catch (const std::exception& e) {
-        std::cerr << "Exception occurred: " << e.what() << std::endl;
-    }
-    
-    int commaCount = 0;
-    for (char ch : cmd_output) {
-        if (ch == ',') {
-            commaCount++;
-        }
-    }
-    
-    std::vector<int64_t> array;
-    int elementCount = 0; // Keep track of the actual number of elements
 
-    // Remove the brackets at the beginning and the end if present
-    if (cmd_output.front() == '[') {
-        cmd_output.erase(cmd_output.begin());
-    }
-    if (cmd_output.back() == ']') {
-        cmd_output.pop_back();
-    }
-
-    // Use stringstream to parse the numbers
-    std::stringstream ss(cmd_output);
-    std::string token;
-    while (std::getline(ss, token, ',') && elementCount < commaCount+1) {
-        // Remove spaces
-        token.erase(std::remove_if(token.begin(), token.end(), ::isspace), token.end());
-        // Convert string to int64_t and add to array
-        array.push_back(std::stoll(token));
-        elementCount++;
-    }
+    // Text to ids
+    int elementCount;
+    std::vector<int64_t> iVecCache;
+    iVecCache = textToId(text_entry, idDictionary, elementCount);
     
     int64_t* text = new int64_t[elementCount];
     for (int i = 0; i < elementCount; i++) {
-        text[i] = array[i];
+        text[i] = iVecCache[i];
     }
+    std::cout << "ID sequence: ";
+    for (const auto id : iVecCache) { std::cout << id << ", ";}
+    std::cout << std::endl;
     std::cout << "Number of words: " << elementCount << std::endl;
     std::cout << std::endl;
     std::cout << "Inferencing..." << std::endl;
