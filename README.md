@@ -25,7 +25,7 @@ git clone https://github.com/talker93/oneMinTTS.git
 ```
 2. Open folder `build/<YOUR PC ARCH>` in terminal/cmd
 ```
-cd oneMinTTS/build/mac_arm64
+cd oneMinTTS/build/mac
 ```
 3. Start Synthesis
 ```
