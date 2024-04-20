@@ -1,2 +1,2 @@
-build/mac/vits.onnx filter=lfs diff=lfs merge=lfs -text
-build/windows/vits.onnx filter=lfs diff=lfs merge=lfs -text
+vits2/build/mac/vits.onnx filter=lfs diff=lfs merge=lfs -text
+vits2/build/windows/vits.onnx filter=lfs diff=lfs merge=lfs -text
