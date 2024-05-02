@@ -1,37 +1,34 @@
-# oneMinTTS
-Welcome to the GitHub repository for oneMinTTS! This project provides a simple solution for speech synthesis and model management, designed for high-performance and universal application. Below are some of the key features:
+<!-- # oneMinTTS -->
+Welcome to the **oneMinTTS** GitHub repository! 
+This project is engineered for high-performance speech synthesis and streamlined model management, now featuring support for HuggingFace 🤗 MMS-TTS models!
 
-## Key Features
+## 🔑 Key Features
+- **小/Light-Weight**: A sleek executable under 200kB simplifies setup with all libraries included, perfect for easy deployment and rapid distribution of ONNX voice synthesis applications.
 
-- **ONNX Model Support**: Seamlessly import ONNX models, including self-trained ones, enabling a wide range of applications and research in voice synthesis.
+- **快/Agile-Dev**: Designed for agility with one C++ file for model inference and one Python file for model export, facilitating quick prototyping from text input to waveform output.
 
-- **High-Performance C++**: Entirely written in C++, this project offers high performance and is crafted for efficiency and speed.
+- **灵/Flex-Compatibility**: Fully compatible across Windows, macOS, and Linux, ideal for both desktop and server environments.
 
-- **Self-Contained**: Comes with all necessary libraries included. There's no need for additional installations, making setup and operation as straightforward as possible.
-
-- **Superior Quality**: Provides superior audio quality compared to Tacotron, enhancing user experience and output fidelity.
-
-- **VITS Compatibility**: While based on various TTS Python projects, this implementation primarily serves the VITS model, ensuring compatibility and ease of use.
-
-- **Cross-Platform Support**: Fully supports both macOS and Windows PC, ensuring broad accessibility and user flexibility.
-
-## Getting Started
+## 🚀 Getting Started
 To begin using oneMinTTS, simply clone this repository to your local machine. Given the all-inclusive nature of the project, you can dive straight into importing your ONNX models or experimenting with pre-trained VITS models without the hassle of additional setups.
 
-1. Clone repo
-```
+1. **Clone the Repository**
+```bash
 git clone https://github.com/talker93/oneMinTTS.git
 ```
-2. Create the build folder
-```
+2. **Prepare the Environment**
+```bash
 cd mms_tts && mkdir build && cd build
+cmake .. && make
 ```
-3. Compilation
+3. **Run the Synthesizer**
+```bash
+cd fewByte
+./fewByteTTS
 ```
-cmake .. && make && cd fewByte
-```
-4. Start your synthesis
-```
+
+### 💡 Quick Example
+```bash
 ❯ ./fewByteTTS
 Enter your model name: e.g. facebook/mms-tts-kor
 facebook/mms-tts-ara
@@ -47,35 +44,29 @@ Jobs done.
 Output written to facebook_mms-tts-ara.wav
 ```
 
-## Huggingface Models Export
-Due to the GitHub file size limitation, this project only contains 3 basic model for English, Korean and Arabic.
-To download more models from huggingface, please do as below:
+## 🤗 Huggingface Models Export
+This project includes three basic models due to GitHub's file size limits. For additional models:
 1. Install Huggingface Dependencies
 ```
-pip install transformers==4.39.1
-pip install torch==2.2.1
-pip install onnx==1.14.1
+pip install transformers==4.39.1 torch==2.2.1 onnx==1.14.1
 ```
-2. Choose your perspective models
-Modify the list `model_name` in `mms_tts/files/model_download.py`.
-A comprehensive model list is available on `https://dl.fbaipublicfiles.com/mms/misc/language_coverage_mms.html`.
+2. Select Models
+Edit `model_name` in `mms_tts/files/model_download.py` with desired models from [this list](https://dl.fbaipublicfiles.com/mms/misc/language_coverage_mms.html).
 ```
 model_names = ["facebook/mms-tts-eng", "facebook/mms-tts-kor", "facebook/mms-tts-ara", "facebook/mms-tts-deu", "facebook/mms-tts-hin", 
                 "facebook/mms-tts-spa", "facebook/mms-tts-mal", "facebook/mms-tts-kan", "facebook/mms-tts-fra", "facebook/mms-tts-rus"]
 ```
-3. Export
-Models are exported to `mms_tts/files/models`
+1. Export Models
 ```
 python files/model_download.py
 ```
 
 ## VITS2
-To utilize the vanila VITS2 model, please go to folder `vits2` for further instruction.
+For using the vanilla VITS2 model, refer to the vits2 folder instructions.
 
-## Contributing
-We welcome contributions and suggestions! 
-Feel free to bring out any questions in Issues.
+## 🤝 Contributing
+Contributions are welcome! Feel free to post questions and suggestions in Issues.
 <!-- Please refer to the Contributing Guidelines for more information. -->
 
-## License
-This project is licensed under the MIT License - see the LICENSE file for details.
+## 📄 License
+Licensed under the MIT License - see the LICENSE file for details.
