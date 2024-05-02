@@ -51,12 +51,13 @@ This project includes three basic models due to GitHub's file size limits. For a
 pip install transformers==4.39.1 torch==2.2.1 onnx==1.14.1
 ```
 2. Select Models
+
 Edit `model_name` in `mms_tts/files/model_download.py` with desired models from [this list](https://dl.fbaipublicfiles.com/mms/misc/language_coverage_mms.html).
 ```
 model_names = ["facebook/mms-tts-eng", "facebook/mms-tts-kor", "facebook/mms-tts-ara", "facebook/mms-tts-deu", "facebook/mms-tts-hin", 
                 "facebook/mms-tts-spa", "facebook/mms-tts-mal", "facebook/mms-tts-kan", "facebook/mms-tts-fra", "facebook/mms-tts-rus"]
 ```
-1. Export Models
+3. Export Models
 ```
 python files/model_download.py
 ```
