@@ -18,7 +18,7 @@ git clone https://github.com/talker93/oneMinTTS.git
 ```
 2. **Prepare the Environment**
 ```bash
-cd mms_tts && mkdir build && cd build
+cd oneMinTTS/mms_tts && mkdir build && cd build
 cmake .. && make
 ```
 3. **Run the Synthesizer**
